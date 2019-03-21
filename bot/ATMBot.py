@@ -1,7 +1,7 @@
 class ATMBot(object):
     def __init__(self):
         self.yes = 1
-        self.no = 0
+        self.no = 1
         self.location = ""
         self.minBill = ""
         self.gonnaUpdate = False
@@ -21,7 +21,8 @@ class ATMBot(object):
     def setLocation(self, location):
         self.location = location
     def setMinBill(self, minBill):
-        self.minBill = minBill
+        if( (int)(minBill) < (int)(self.minBill) or self.minBill == ""):
+            self.minBill = minBill
     def setGonnaUpdate(self, gonnaUpdate):
         self.gonnaUpdate = gonnaUpdate
     
