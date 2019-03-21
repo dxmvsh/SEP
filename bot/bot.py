@@ -10,7 +10,6 @@ atmIn = ATMBot()
 atmOut = ATMBot()
 atmIn.setLocation("ATM in SDU")
 atmOut.setLocation("ATM outside SDU")
-updatingATM = ""
 
 @bot.message_handler(commands = ['start'])
 def send_welcome(message):
@@ -24,6 +23,7 @@ def send_atm(message):
 @bot.message_handler(func = lambda message : message.text == 'Check')
 def send_check(message):
     bot.send_message(message.chat.id, atmIn.analyze()+"\n"+atmOut.analyze())
+    show_check(message.chat.id)
 
 @bot.message_handler(func = lambda message : message.text == 'Update')
 def send_update(message):
@@ -32,54 +32,84 @@ def send_update(message):
 @bot.message_handler(func = lambda message : message.text == 'ATM in SDU' or 
                                              message.text == 'ATM outside SDU')
 def send_workingUpdate(message):    
-    updatingATM = message.text
+    if message.text == 'ATM in SDU':
+        atmIn.setGonnaUpdate(True)
+    else:
+        atmOut.setGonnaUpdate(True)
     show_workingUpdate(message.chat.id)
 
 @bot.message_handler(func = lambda message : message.text == 'Yes' or
                                              message.text == 'No')
 def send_workingUpdate(message):    
     if message.text == 'Yes':
-        if updatingATM == 'ATM in SDU':
+        if atmIn.isGonnaUpdate():
             atmIn.countYes()
         else:
             atmOut.countYes()
+        show_billsUpdate(message.chat.id)
     else:
-        if updatingATM == 'ATM in SDU':
+        if atmIn.isGonnaUpdate():
             atmIn.countNo()
         else:
             atmOut.countNo()
+        send_back(message)
 
-    show_workingUpdate(message.chat.id)
+@bot.message_handler(func = lambda message : message.text == '1000' or
+                                             message.text == '2000' or
+                                             message.text == '5000')
+def send_billsUpdate(message):
+    if atmIn.isGonnaUpdate():
+        atmIn.setMinBill(message.text)
+        atmIn.setGonnaUpdate(False)
+    else:
+        atmOut.setMinBill(message.text)
+        atmOut.setGonnaUpdate(False)
+    send_back(message)
+@bot.message_handler(func = lambda message: message.text == 'Back' or 
+                                            message.text == 'Exit')
+def send_back(message):
+    bot.send_message(message.chat.id, "Thank you for using our service!\nPress Check or Update next time you use our bot!")
+    show_atm(message.chat.id)
 
 def show_start(chat_id):
     keyboard = Keyboard()
     keyboard.addButtons(["ATM"])
     keyboard.setRowWidth(1)
-    bot.send_message(chat_id, "Press ATM", reply_markup=keyboard.getResult())
+    botMessage = "Press ATM"
+    bot.send_message(chat_id, botMessage, reply_markup=keyboard.getResult())
 
 def show_atm(chat_id):
     keyboard = Keyboard()
     keyboard.addButtons(["Check", "Update"])
-    bot.send_message(chat_id, "What you want to do with ATM status?"
-                            , reply_markup=keyboard.getResult())
+    botMessage = "What you want to do with ATM status?"
+    bot.send_message(chat_id, botMessage, reply_markup=keyboard.getResult())
 
 def show_check(chat_id):
     keyboard = Keyboard()
     keyboard.addButtons(["Update", "Exit"])
-    bot.send_message(chat_id, "What you want to do next?"
-                            , reply_markup=keyboard.getResult())
+    botMessage = "What you want to do next?"
+    print(atmIn)
+    print(atmOut)
+    bot.send_message(chat_id, botMessage, reply_markup=keyboard.getResult())
 
 def show_update(chat_id):
     keyboard = Keyboard()
     keyboard.addButtons([atmIn.getLocation(), atmOut.getLocation()])
-    bot.send_message(chat_id, "Which ATM's status you want to update?"
-                            , reply_markup=keyboard.getResult())
+    botMessage = "Which ATM's status you want to update?"
+    bot.send_message(chat_id, botMessage, reply_markup=keyboard.getResult())
 
 def show_workingUpdate(chat_id):
     keyboard = Keyboard()
     keyboard.addButtons(["Yes", "No"])
-    bot.send_message(chat_id, "Does it work?"
-                            , reply_markup=keyboard.getResult())
-    
+    botMessage = "Does it work?"
+    bot.send_message(chat_id, botMessage, reply_markup=keyboard.getResult())
+
+def show_billsUpdate(chat_id):
+    keyboard = Keyboard()
+    keyboard.addButtons(["1000", "2000", "5000", "Back"])
+    botMessage = "What is the minimum bill you got from ATM?" + "\n"
+    botMessage = botMessage + "If you didn't get any cash, press Back button"  
+    bot.send_message(chat_id, botMessage, reply_markup=keyboard.getResult())
+
 if __name__ == '__main__':
     facade.startBot()
