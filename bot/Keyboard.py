@@ -1,11 +1,10 @@
 from telebot import types
 
-
 class Keyboard(object):
     def __init__(self):
-        self.rowWidth = 3
-        self.resizeKeyboard = False
-        self.isOneTimeKeyboard = False
+        self.rowWidth = 2
+        self.resizeKeyboard = True
+        self.isOneTimeKeyboard = True
 
     def addButtons(self, texts):
         self.texts = texts
