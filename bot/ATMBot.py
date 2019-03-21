@@ -1,9 +1,9 @@
 class ATMBot(object):
     def __init__(self):
-        self.yes = 1
-        self.no = 1
+        self.yes = 0
+        self.no = 0
         self.location = ""
-        self.minBill = ""
+        self.minBill = 0
         self.gonnaUpdate = False
     def __str__(self):
         print(self.yes)
@@ -21,7 +21,7 @@ class ATMBot(object):
     def setLocation(self, location):
         self.location = location
     def setMinBill(self, minBill):
-        if( (int)(minBill) < (int)(self.minBill) or self.minBill == ""):
+        if( minBill < self.minBill or self.minBill == 0):
             self.minBill = minBill
     def setGonnaUpdate(self, gonnaUpdate):
         self.gonnaUpdate = gonnaUpdate
@@ -51,7 +51,7 @@ class ATMBot(object):
         percentageStr = "("+(str)(percentage)+"%)"
         ansStr = self.location + worksStr + percentageStr + "\n"
         if(self.minBill != ""):
-            ansStr = ansStr + "Minimum bill in " + self.location + " is: " + self.minBill
+            ansStr = ansStr + "Minimum bill in " + self.location + " is: " + (str)(self.minBill)
         else:
             ansStr = ansStr + "Information about minimum bill in " + self.location + " is unavailable right now"
         return ansStr

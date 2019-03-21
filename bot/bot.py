@@ -30,7 +30,14 @@ def send_atm(message):
 
 @bot.message_handler(func = lambda message : message.text == 'Check')
 def send_check(message):
-    botMessage = atmIn.analyze()+"\n"+atmOut.analyze()
+    if atmIn.yes == 0 and atmIn.no == 0:
+        botMessage = "We don't have any information about " + atmIn.getLocation() + "\n"
+    else:
+        botMessage = atmIn.analyze() + "\n"
+    if atmOut.yes == 0 and atmOut.no == 0:
+        botMessage = botMessage + "We don't have any information about " + atmOut.getLocation()
+    else:
+        botMessage = botMessage + atmOut.analyze()
     bot.send_message(message.chat.id, botMessage)
     show_check(message.chat.id)
 
@@ -68,10 +75,10 @@ def send_workingUpdate(message):
                                              message.text == '5000')
 def send_billsUpdate(message):
     if atmIn.isGonnaUpdate():
-        atmIn.setMinBill(message.text)
+        atmIn.setMinBill((int)(message.text))
         atmIn.setGonnaUpdate(False)
     else:
-        atmOut.setMinBill(message.text)
+        atmOut.setMinBill((int)(message.text))
         atmOut.setGonnaUpdate(False)
     send_back(message)
 @bot.message_handler(func = lambda message: message.text == 'Back' or 
