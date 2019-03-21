@@ -17,6 +17,13 @@ def send_welcome(message):
     bot.send_message(message.chat.id, botMessage)
     show_start(message.chat.id)
 
+@bot.message_handler(commands = ['help'])
+def send_help(message):
+    botMessage = 'Hi!\n'
+    botMessage = botMessage + 'Our bot checks ATMs\' status by updates of the users. In order to continue using our bot type /start again\n'    
+    bot.send_message(message.chat.id, botMessage)
+    show_start(message.chat.id)
+
 @bot.message_handler(func = lambda message : message.text == 'ATM')
 def send_atm(message):
     show_atm(message.chat.id)
