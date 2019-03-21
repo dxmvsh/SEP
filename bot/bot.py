@@ -13,7 +13,8 @@ atmOut.setLocation("ATM outside SDU")
 
 @bot.message_handler(commands = ['start'])
 def send_welcome(message):
-    bot.send_message(message.chat.id, 'Welcome!\nType /help for more information.')
+    botMessage = 'Welcome!\nType /help for more information.'
+    bot.send_message(message.chat.id, botMessage)
     show_start(message.chat.id)
 
 @bot.message_handler(func = lambda message : message.text == 'ATM')
@@ -22,7 +23,8 @@ def send_atm(message):
 
 @bot.message_handler(func = lambda message : message.text == 'Check')
 def send_check(message):
-    bot.send_message(message.chat.id, atmIn.analyze()+"\n"+atmOut.analyze())
+    botMessage = atmIn.analyze()+"\n"+atmOut.analyze()
+    bot.send_message(message.chat.id, botMessage)
     show_check(message.chat.id)
 
 @bot.message_handler(func = lambda message : message.text == 'Update')
@@ -68,7 +70,9 @@ def send_billsUpdate(message):
 @bot.message_handler(func = lambda message: message.text == 'Back' or 
                                             message.text == 'Exit')
 def send_back(message):
-    bot.send_message(message.chat.id, "Thank you for using our service!\nPress Check or Update next time you use our bot!")
+    botMessage = "Thank you for using our service!\n"
+    botMessage = botMessage + "Press Check or Update next time you use our bot!"
+    bot.send_message(message.chat.id, botMessage)
     show_atm(message.chat.id)
 
 def show_start(chat_id):
@@ -88,8 +92,6 @@ def show_check(chat_id):
     keyboard = Keyboard()
     keyboard.addButtons(["Update", "Exit"])
     botMessage = "What you want to do next?"
-    print(atmIn)
-    print(atmOut)
     bot.send_message(chat_id, botMessage, reply_markup=keyboard.getResult())
 
 def show_update(chat_id):
@@ -107,7 +109,7 @@ def show_workingUpdate(chat_id):
 def show_billsUpdate(chat_id):
     keyboard = Keyboard()
     keyboard.addButtons(["1000", "2000", "5000", "Back"])
-    botMessage = "What is the minimum bill you got from ATM?" + "\n"
+    botMessage = "What is the minimum bill you got from ATM?\n"
     botMessage = botMessage + "If you didn't get any cash, press Back button"  
     bot.send_message(chat_id, botMessage, reply_markup=keyboard.getResult())
 
